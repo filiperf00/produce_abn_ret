@@ -1,4 +1,4 @@
-# **Cumulative Abnormal Returns Analysis for Mergers**
+# **Estimating Cumulative Abnormal Returns of M&A Deals**
 
 ## **Overview**
 This repository contains a set of R scripts designed to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). The analysis includes both the merging parties (acquirer and target) and their top-5 rivals, as identified using the **Hoberg-Philips dataset**. The study covers an event window of 15 trading days before and after the merger announcement date (31 days in total).
