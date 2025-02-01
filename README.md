@@ -34,7 +34,7 @@ where $t=1, 2, ..., 200$ represents the trading days of the estimation window an
 
 Such model is then leveraged to extrapolate the firm's returns through the event window (15 trading days surrounding the merger announcement date). It thus produces the counterfactual, that is, the firm's estimated returns in absence of the deal announcement. 
 
-The difference between the _actual_ company returns and those predicted (through the market model) is defined as the _abnormal_ returns.
+The difference between the _actual_ company returns and those predicted (through the market model) is defined as the _abnormal_ returns. The latter were computed in cumulative terms.
 
 ---
 
