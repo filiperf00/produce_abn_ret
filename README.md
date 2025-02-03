@@ -1,15 +1,15 @@
 # **Estimating Cumulative Abnormal Returns of M&A Deals**
 
 ## **Overview**
-This repository contains a set of R scripts designed to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). The analysis includes both the merging parties (acquirer and target) and their top-5 rivals, as identified using the **Hoberg-Philips dataset**. The study covers an event window of 15 trading days before and after the merger announcement date (31 days in total).
+This repository contains a set of R scripts used to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). The analysis includes both the merging parties (acquirer and target) and their top-5 rivals, as identified using the **Hoberg-Philips dataset**. The study covers an event window of 15 trading days before and after the merger announcement date (31 days in total).
 
 The project is part of RA work for Professors Jamie Coen and Patrick Coen at Imperial College.
 
 ## **Data Requirements**
 - **M&A Data:**  
   - Provided by the **LSEG/Refinitiv workspace**.
-- **Hoberg-Philips Dataset:**  
-  - Used to identify the closest rivals to the merging firms.
+- **[(Baseline) Hoberg-Philips Dataset](https://hobergphillips.tuck.dartmouth.edu/tnic_basedata.html):**  
+  - The dataset produces a competitor score ranked from 0 to 1, based on the similarity score of the product section of the firms' 10-K filings. 
 - **CRSP Data:**  
   - Stock data for S&P500, merging firms and their competitors.
 
@@ -32,7 +32,7 @@ where $t=1, 2, ..., 200$ represents the trading days of the estimation window an
 - $\mathbf{\beta_i}$ is sensitivity of the firm’s returns to the market.
 - $\mathbf{R_{mt}}$ is the benchmark market return (e.g., S&P500).
 
-Such model is then leveraged to extrapolate the firm's returns through the event window (15 trading days surrounding the merger announcement date). It thus produces the counterfactual, that is, the firm's estimated returns in absence of the deal announcement. 
+Such model is then leveraged to extrapolate the firm's returns throughout the event window (15 trading days surrounding the merger announcement date). It thus produces the counterfactual, that is, the firm's estimated returns in absence of the deal announcement. 
 
 The difference between the _actual_ company returns and those predicted (through the market model) is defined as the _abnormal_ returns. The latter were computed in cumulative terms.
 
@@ -63,7 +63,7 @@ The project is divided into several steps, each assigned to a single script, tha
 
 ### **Step 6: Get Acquiror and Rivals’ Stock Data**
 - **Script:** `6_get_stck_data_of_acq_and_rivals.R`
-- **Purpose:** With the CRSP identifiers of merging parties and rivals scooped, this script fetches the historical stock price and returns data for all acquirors and respective rivals (but not yet subsetted by the event and estimation window).
+- **Purpose:** With the CRSP identifiers of merging parties and rivals scooped, this script fetches the historical stock price and returns data for all acquirors and respective rivals.
 
 ### **Step 7: Get Target and Rivals’ Stock Data**
 - **Script:** `7_get_stck_data_for_tgt_and_rivals.R`
@@ -100,11 +100,13 @@ The project is divided into several steps, each assigned to a single script, tha
   Add-Content c:\Users\$env:USERNAME\Documents\.Renviron "WRDS_USER=your_username"
   Add-Content c:\Users\$env:USERNAME\Documents\.Renviron "WRDS_PASS=your_password"
   ```
+- **Downloading M&A Deals:**  
+  Ensure to download M&A deals above $1Mn of US firms through the LSEG/Refinitiv Workspace.
 
 ---
 
 ## **Output**
-- The project generates a dataset with the following key outputs for each firm:
+- The project generates a dataset with the following outputs for each deal:
   - Cumulative Abnormal Returns (CAR) over the 31-day event window relative to the market both in relative (i.e. using stock returns) and absolute terms (using stock prices).
   - Firm-specific information (industry, ticker, market cap, rivals, etc.).
 
