@@ -6,12 +6,12 @@ This repository contains a set of R scripts used to estimate the cumulative abno
 The project is part of RA work for Professors Jamie Coen and Patrick Coen at Imperial College.
 
 ## **Data Requirements**
-- **M&A Data:**  
-  - Provided by the **LSEG/Refinitiv workspace**.
+- **LSEG/Refinitiv workspace:**  
+  - Database used to obtain M&A data from 1989 to 2023 (inclusive).
 - **[(Baseline) Hoberg-Philips Dataset](https://hobergphillips.tuck.dartmouth.edu/tnic_basedata.html):**  
-  - The dataset produces a competitor score ranked from 0 to 1, based on the similarity score of the product section of the firms' 10-K filings. 
+  - The dataset produces a competitor score ranked from 0 to 1, based on the (cosine) similarity score of the product section of the firms' 10-K filings. 
 - **CRSP Data:**  
-  - Stock data for S&P500, merging firms and their competitors.
+  - Stock data for S&P500, merging parties and respective competitors.
 
 Using Refinitiv as database, M&A deals were filtered by those above $1Mn in value and whose merging parties belonged to the US. It spans the years of 1989 up until 2023 and contains deal info such as merger announcement date, firm name, industry, stock ticker, market value, among other. The rivals of each merging party were retrieved from the Hoberg-Philips dataset and then matched with CRSP to obtain their stock data.
 
