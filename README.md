@@ -1,24 +1,41 @@
 # **Estimating Cumulative Abnormal Returns of M&A Deals**
 
-## **Author:**
-Filipe Ferreira
+## **Author:** Filipe Ferreira
 
 ## **Overview**
-This repository contains a set of R scripts used to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). The analysis includes both the merging parties (acquirer and target) and their top-5 rivals, as identified using the **Hoberg-Philips** dataset. The study covers an event window of 15 trading days before and after the merger announcement date (31 days in total).
+This repository contains a set of R scripts used to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). The analysis includes both the merging parties (acquirer and target) and their top-5 rivals, obtained from the **Hoberg-Philips** dataset. The study covers an event window of 15 trading days before and after the merger announcement date (31 days in total).
 
 The project is part of RA work for Jamie Coen at Imperial College and Patrick Coen (Toulouse School of Economics).
 
-## **Data Requirements**
-- **LSEG/Refinitiv workspace:**  
-  - Database used to obtain M&A data from 1989 to 2023 (inclusive).
-- **[(Baseline) Hoberg-Philips Dataset](https://hobergphillips.tuck.dartmouth.edu/tnic_basedata.html):**  
-  - The dataset produces a competitor score ranked from 0 to 1, based on the (cosine) similarity score of the product section of the firms' 10-K filings. 
-- **CRSP Data:**  
-  - Stock data for S&P500, merging parties and respective competitors.
+## **Data Sources**
+**Orbis M&A:**  
+  - Orbis M&A is a comprehensive database from Mood's containing more than 3 million M&A deals since 1997 up until today.
+  - The working sample consisted of 75k deals with a value of at least $1Mn and in which one of the merging parties must be a U.S firm.
+  - It spans the years of 1989 up until 2023 and contains deal and merging parties' information such as merger announcement date, firm name, CUSIP, industry, stock ticker, market value, among other.
+  - **Key firm identifier used:** 6-digit trimmed CUSIP (a North American financial security identifier comprised of 9 digits).
+    
+**[(Baseline) Hoberg-Philips](https://hobergphillips.tuck.dartmouth.edu/tnic_basedata.html) (H-P henceforth):**  
+  - The dataset produces competitor scores of U.S public firms ranked from 0 (not a competitor) to 1 (very close competitor), based on the (cosine) similarity score of the product section of the firms' 10-K filings. The database also reports the year of the competitor score which is simply the fiscal year of the 10-K filing (i.e. no lags). That is, a rival score with a date of 2020 means it was computed using the 10-K published in 2020 by each firm.
+  - Firms are identified via Compustat's GVKEY (firm unique permanent identifier). Its coverage dates from 1988 to present.
+  - **Key firm identifier used:** GVKEY - a 6-digit Compustat unique firm identifier that tracks it throughout all its history (regardless of corporate actions such as mergers or spin-offs).
+    
+**Compustat North America:** 
+  - Compustat North America is a marker and corporate financial database containing since the 1950s. 
+  - The dataset contains stock data of S&P500, merging parties and respective competitors.
+  - **Key firm identifier used:** GVKEY and CUSIP
 
-Using Refinitiv as database, M&A deals were filtered by those above $1Mn in value and whose merging parties belonged to the US. It spans the years of 1989 up until 2023 and contains deal info such as merger announcement date, firm name, industry, stock ticker, market value, among other. The rivals of each merging party were retrieved from the Hoberg-Philips dataset and then matched with CRSP to obtain their stock data.
+**Matching process:**
 
-Matching was carried using the CRSP and COMPUSTAT unique identifiers (permco, permno; GVKEY).
+1. Merge Orbis dataset with Compustat to retrieve the merging parties' GVKEYS.
+2. Filter the H-P dataset with the latter's GVKEYS.
+3. The top-5 rivals ranked by H-P's competitors score (0 being the lowest and 1 the highest) were picked after applying the following filters:
+
+   - Only the latest rival score of each competitor was kept.
+   - Year of the competitor score (which equals the 10-K publishing date) was either the same as the merger announcement date or at most 3 years before.
+   - Competitors needed to have stock data available in Compustat at least 2 months after and 3 years before the merger announcement date.
+
+4. With the GVKEYS of the merging parties and respective competitors, stock data was retrieved from Compustat.
+
 
 ## **Methodology**
 The analysis was carried using the market-model whereby we produce a linear fit of historical stock data of the firm on the market (i.e. S&P500). An estimation window of 200 trading days prior to the event window was used to estimate the coefficients. Formally,
