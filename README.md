@@ -90,7 +90,7 @@ The project is divided into several steps, each assigned to a single script, tha
 - **Purpose:** Once all the identifying data has been retrieved, the next step is to scoop stock prices for individual firms and S&P500 returns (next script) from Compustat. 
 
 ### **Step 8: Get S&P500 Stock Data**
-- **Script:** `7_get_sp500_data.R`
+- **Script:** `8_get_firms_stock_data.R`
 - **Purpose:** Obtain S&P500 index price from Compustat.
 
 ### **Step 9: Clean Stock Data (for Regressions)**
