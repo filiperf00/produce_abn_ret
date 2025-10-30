@@ -70,7 +70,7 @@ The project is divided into several steps, each assigned to a single script, tha
 - **Purpose:** Match acquirors in Compustat using the CUSIP to retrieve its GVKEY. The former's last digit was removed beforehand for it is simply a mathematical check digit. 
 
 ### **Step 3: Match acquirors with Compustat**
-- **Script:** `2_append_tgt_gvkey.R`
+- **Script:** `3_append_tgt_gvkey.R`
 - **Purpose:** Identical to Step 2 but for target firms.
 
 ### **Step 4: Identify Acquiror Rivals**
@@ -86,11 +86,11 @@ The project is divided into several steps, each assigned to a single script, tha
 - **Purpose:** By the end of step 5, the code has generated two datasets. Both contain deal information (e.g. announcement, deal value, bid premium, deal type, etc.). However, one includes the acquirors' and rivals' GVKEYS as well as their competitor scores, while the second contains the analogous data but for targets. This script combines both datasets into one.
 
 ### **Step 7: Get All Firms (Merging Parties plus Rivals) Stock Data**
-- **Script:** `7_get_sp500_data.R`
+- **Script:** `7_get_firms_stock_data.R`
 - **Purpose:** Once all the identifying data has been retrieved, the next step is to scoop stock prices for individual firms and S&P500 returns (next script) from Compustat. 
 
 ### **Step 8: Get S&P500 Stock Data**
-- **Script:** `8_get_firms_stock_data.R`
+- **Script:** `8_get_sp500_data.R` 
 - **Purpose:** Obtain S&P500 index price from Compustat.
 
 ### **Step 9: Clean Stock Data (for Regressions)**
