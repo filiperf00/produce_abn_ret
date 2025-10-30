@@ -3,7 +3,7 @@
 ## **Author:** Filipe Ferreira
 
 ## **Overview**
-This repository contains a set of R scripts used to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). The analysis includes both the merging parties (acquirer and target) and their top-5 rivals, obtained from the **Hoberg-Philips** dataset. The study covers an event window of 15 trading days before and after the merger announcement date (31 days in total).
+This repository contains a set of R scripts used to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). This includes both merging parties (acquirer and target) as well as their top-5 rivals, obtained from the **Hoberg-Philips** dataset. The abnormal returns are estimated for an event window of 15 trading days before and after the merger announcement date (31 days in total).
 
 The project is part of RA work for Jamie Coen at Imperial College and Patrick Coen (Toulouse School of Economics).
 
@@ -12,21 +12,23 @@ The project is part of RA work for Jamie Coen at Imperial College and Patrick Co
   - Orbis M&A is a comprehensive database from Mood's containing more than 3 million M&A deals since 1997 up until today.
   - The working sample consisted of 75k deals with a value of at least $1Mn and in which one of the merging parties must be a U.S firm.
   - It spans the years of 1989 up until 2023 and contains deal and merging parties' information such as merger announcement date, firm name, CUSIP, industry, stock ticker, market value, among other.
-  - **Key firm identifier used:** 6-digit trimmed CUSIP (a North American financial security identifier comprised of 9 digits).
+  - **Key firm identifier used:** CUSIP (which needed to be extracted from the ISIN).[^1]
+
+[^1]: The former is a North American financial security identifier comprised of 9 digits while the latter is a 12-digit international security identifier that contains the CUSIP when applied to US firms.
     
 **[(Baseline) Hoberg-Philips](https://hobergphillips.tuck.dartmouth.edu/tnic_basedata.html) (H-P henceforth):**  
   - The dataset produces competitor scores of U.S public firms ranked from 0 (not a competitor) to 1 (very close competitor), based on the (cosine) similarity score of the product section of the firms' 10-K filings. The database also reports the year of the competitor score which is simply the fiscal year of the 10-K filing (i.e. no lags). That is, a rival score with a date of 2020 means it was computed using the 10-K published in 2020 by each firm.
   - Firms are identified via Compustat's GVKEY (firm unique permanent identifier). Its coverage dates from 1988 to present.
-  - **Key firm identifier used:** GVKEY - a 6-digit Compustat unique firm identifier that tracks it throughout all its history (regardless of corporate actions such as mergers or spin-offs).
+  - **Key firm identifier used:** GVKEY - a Compustat unique firm identifier that tracks it throughout all its history, regardless of corporate events such as mergers or spin-offs.
     
 **Compustat North America:** 
   - Compustat North America is a marker and corporate financial database containing since the 1950s. 
-  - The dataset contains stock data of S&P500, merging parties and respective competitors.
+  - The dataset contains stock data, namely stock prices (adjusted for events such as stock splits), of S&P500, merging parties and respective competitors.
   - **Key firm identifier used:** GVKEY and CUSIP
 
-**Matching process:**
+## **Matching steps:**
 
-1. Merge Orbis dataset with Compustat to retrieve the merging parties' GVKEYS.
+1. Merge Orbis dataset with Compustat via CUSIP to retrieve the merging parties' GVKEYS.
 2. Filter the H-P dataset with the latter's GVKEYS.
 3. The top-5 rivals ranked by H-P's competitors score (0 being the lowest and 1 the highest) were picked after applying the following filters:
 
@@ -38,7 +40,7 @@ The project is part of RA work for Jamie Coen at Imperial College and Patrick Co
 
 
 ## **Methodology**
-The analysis was carried using the market-model whereby we produce a linear fit of historical stock data of the firm on the market (i.e. S&P500). An estimation window of 200 trading days prior to the event window was used to estimate the coefficients. Formally,
+The analysis was carried using the market-model whereby we produce a linear fit of historical stock data of the firm on the market (i.e. S&P500). An estimation window of 200 trading days prior to the event window was used to estimate the market coefficient (i.e. how correlated is the individual stock with the market portfolio). Formally,
 
 <div align="center">
 
@@ -47,62 +49,65 @@ $E[R_{it} | X_t] = \mu_i + \beta_i R_{mt}$
 </div>
 
 where $t=1, 2, ..., 200$ represents the trading days of the estimation window and
-- $\mathbf{R_{it}}$ denotes the return of the stock $i$ at time $t$.
+- $\mathbf{R_{i,t}}$ denotes the return of the stock $i$ at time $t$.
 - $\mathbf{\mu_i}$ is the intercept representing firm-specific average return.
-- $\mathbf{\beta_i}$ is sensitivity of the firm’s returns to the market.
-- $\mathbf{R_{mt}}$ is the benchmark market return (e.g., S&P500).
+- $\mathbf{\beta_i}$ is sensitivity of the firm’s returns to that of the market.
+- $\mathbf{R_{m,t}}$ is the benchmark market return (e.g., S&P500).
 
-Such model is then leveraged to extrapolate the firm's returns throughout the event window (15 trading days surrounding the merger announcement date). It thus produces the counterfactual, that is, the firm's estimated returns in absence of the deal announcement. 
-
-The difference between the _actual_ company returns and those predicted (through the market model) is defined as the _abnormal_ returns. The latter were computed in cumulative terms.
+Such model is then leveraged to extrapolate the firm's returns throughout the event window (15 trading days surrounding the merger announcement date) had the M&A deal never been announced. It thus produces the counterfactual - the firm's estimated returns in absence of the deal announcement. This will be subtracted from the _actual_ observed stock returns of the firm to produce the abnormal returns (which are reported in cumulative terms). 
 
 ---
 
-## **Project Workflow**
+## **Project's scripts**
 The project is divided into several steps, each assigned to a single script, that are executed by a **master script (`master_script.R`)**. The steps are as follows:
 
-### **Step 1: Import and Clean M&A Data**
-- **Script:** `1_import_and_clean_MnA_data.R`
-- **Purpose:** Imports and cleans the raw M&A data from the LSEG workspace, including basic data cleaning steps.
+### **Step 1: Extract first 6 digits of CUSIP from ISIN**
+- **Script:** `1_extract_cusips.R`
+- **Purpose:** Extracts the 6-digit CUSIP from the ISIN variable (the ISIN contains the CUSIP when it pertains to US firms) to allow matching with Compustat. As the latter only includes U.S public firms it reports the CUSIP but not the ISIN, otherwise a direct matching would be pursued.
 
-### **Step 2: Get Acquiror Identifiers**
-- **Script:** `2_get_and_append_acq_permcos_and_permnos.R`
-- **Purpose:** Matches acquirors in the M&A dataset to CRSP - with the stock ticker and CUSIP - to obtain their permanent company number (`permco`) and stock level (`permno`) CRSP identifiers. These will be key to later retrieve their stock data.
+### **Step 2: Match acquirors with Compustat**
+- **Script:** `2_append_acq_gvkey.R`
+- **Purpose:** Match acquirors in Compustat using the CUSIP to retrieve its GVKEY. The former's last digit was removed beforehand for it is simply a mathematical check digit. 
 
-### **Step 3: Get Target Identifiers**
-- **Script:** `3_get_and_append_tgt_permcos_and_permnos.R`
-- **Purpose:** Similar to Step 2 but for target firms, appending their CRSP identifiers (permco and permno) to the M&A dataset. By the end of this step, the dataset includes all initial M&A info plus CRSP permanent identifiers.
+### **Step 3: Match acquirors with Compustat**
+- **Script:** `2_append_tgt_gvkey.R`
+- **Purpose:** Identical to Step 2 but for target firms.
 
 ### **Step 4: Identify Acquiror Rivals**
 - **Script:** `4_get_and_append_acq_rivals_id_data.R`
-- **Purpose:** Retrieves the top-5 rivals for acquirors, at the time of the merger, based on the Hoberg-Philips dataset. It ranks competitors from 0 to 1 as computed by the similarity score of their product description on SEC filings. 
+- **Purpose:** Filter the Hoberg-Philips dataset by the acquiror's GVKEYS to retrieve its top-5 rivals which are ranked by H-P's competitors score. The latter is a obtained by computing the (cosine) similarity score of firm's product description on SEC filings with that of the rival. It ranges from 0 to 1 (0 being the lowest and 1 the highest) 
 
 ### **Step 5: Identify Target Rivals**
 - **Script:** `5_get_and_append_tgt_rivals_id_data.R`
-- **Purpose:** Identical to Step 4 but for targets firms.
+- **Purpose:** Identical to Step 4 but for target firms.
 
 ### **Step 6: Get Acquiror and Rivals’ Stock Data**
-- **Script:** `6_get_stck_data_of_acq_and_rivals.R`
-- **Purpose:** With the CRSP identifiers of merging parties and rivals scooped, this script fetches the historical stock price and returns data for all acquirors and respective rivals.
+- **Script:** `6_merge_acq_and_tgt_data.R`
+- **Purpose:** By the end of step 5, the code has generated two datasets. Both contain deal information (e.g. announcement, deal value, bid premium, deal type, etc.). However, one includes the acquirors' and rivals' GVKEYS as well as their competitor scores, while the second contains the analogous data but for targets. This script combines both datasets into one.
 
-### **Step 7: Get Target and Rivals’ Stock Data**
-- **Script:** `7_get_stck_data_for_tgt_and_rivals.R`
-- **Purpose:** Similar to Step 6 but for target firms and their rivals.
+### **Step 7: Get All Firms (Merging Parties plus Rivals) Stock Data**
+- **Script:** `7_get_sp500_data.R`
+- **Purpose:** Once all the identifying data has been retrieved, the next step is to scoop stock prices for individual firms and S&P500 returns (next script) from Compustat. 
 
-### **Step 8: Import S&P500 Data**
-- **Script:** `8_get_sp500_data.R`
-- **Purpose:** Imports S&P500 data, used to estimate the counterfactual returns of the individual firm had the merger not taken place.
+### **Step 8: Get S&P500 Stock Data**
+- **Script:** `7_get_sp500_data.R`
+- **Purpose:** Obtain S&P500 index price from Compustat.
 
-### **Step 9: Estimate Abnormal and Cumulative Abnormal Returns**
-- **Script:** `9_run_OLS.R`
-- **Purpose:** Calculates abnormal returns and cumulative abnormal returns (CAR) for acquirors, targets, and rivals over the 31-day event window (15 days before and after the merger date) using an OLS regression model.
+### **Step 9: Clean Stock Data (for Regressions)**
+- **Script:** `9_clean_stock_data.R`
+- **Purpose:** Hereby stock data is cleaned and prepared for regressions to produce the (cumulative) abnormal returns. Among others, the key steps applied were: i) adjust stock prices for events such as stock splits (Compustat reports a variable that keeps track of such events); ii) compute stock returns and total market value using i); iii) ensure the target was not mixed up in the list of acquiror's rivals obtained from H-P database, and vice-versa. 
+
+### **Step 10: Create Funcion to Estimate Cumulative Abnormal Returns (CAR)**
+- **Script:** `10_run_OLS_regressions.R`
+- **Purpose:** Creates the function - which shall be called in the following script - that runs the market-model regression and produces the cumulative abnormal returns.
+
+### **Step 11: Estimate CAR and Report Them in a Dataframe**
+- **Script:** `11_estimate_cum_abn_ret.R`
+- **Purpose:** Calls the function created in `10_run_OLS_regressions.R` to produce the CAR and report them in a final output table.
 
 ### **Master Script**
 - **Script:** `master_script.R`
-- **Purpose:** Automatically runs all the scripts sequentially and processes the data in three batches for time-efficiency purposes:  
-  - 1989-1999  
-  - 2000-2009  
-  - 2010-2023  
+- **Purpose:** Automatically runs all the scripts sequentially and processes the data in batches of 5k deals (to avoid memory clogging).  
 
 ---
 
