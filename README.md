@@ -44,7 +44,7 @@ The analysis was carried using the market-model whereby we produce a linear fit 
 
 <div align="center">
 
-$E[R_{it} | X_t] = \mu_i + \beta_i R_{mt}$
+$E[R_{i,t} | X_t] = \mu_i + \beta_i R_{m,t}$
 
 </div>
 
