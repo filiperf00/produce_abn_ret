@@ -21,8 +21,8 @@ The project is part of RA work for Jamie Coen at Imperial College and Patrick Co
   - Firms are identified via Compustat's GVKEY (firm unique permanent identifier). Its coverage dates from 1988 to present.
   - **Key firm identifier used:** GVKEY - a Compustat unique firm identifier that tracks it throughout all its history, regardless of corporate events such as mergers or spin-offs.
     
-**Compustat North America:** 
-  - Compustat North America is a marker and corporate financial database containing since the 1950s. 
+**Compustat:** 
+  - Compustat is a market and corporate financial database dating as far back as the 1950s. 
   - The dataset contains stock data, namely stock prices (adjusted for events such as stock splits), of S&P500, merging parties and respective competitors.
   - **Key firm identifier used:** GVKEY and CUSIP
 
@@ -63,7 +63,7 @@ The project is divided into several steps, each assigned to a single script, tha
 
 ### **Step 1: Extract first 6 digits of CUSIP from ISIN**
 - **Script:** `1_extract_cusips.R`
-- **Purpose:** Extracts the 6-digit CUSIP from the ISIN variable (the ISIN contains the CUSIP when it pertains to US firms) to allow matching with Compustat. As the latter only includes U.S public firms it reports the CUSIP but not the ISIN, otherwise a direct matching would be pursued.
+- **Purpose:** Extracts the 6-digit CUSIP from the ISIN variable (the ISIN contains the CUSIP when it pertains to US firms) to allow matching with Compustat. 
 
 ### **Step 2: Match acquirors with Compustat**
 - **Script:** `2_append_acq_gvkey.R`
