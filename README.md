@@ -9,7 +9,7 @@ The project is part of RA work for Jamie Coen at Imperial College and Patrick Co
 
 ## **Data Sources**
 **Orbis M&A:**  
-  - Orbis M&A is a comprehensive database from Mood's containing more than 3 million M&A deals since 1997 up until today.
+  - Orbis M&A is a comprehensive database from Moody's containing more than 3 million M&A deals since 1997 up until today.
   - The working sample consisted of 75k deals with a value of at least $1Mn and in which one of the merging parties must be a U.S firm.
   - It spans the years of 1989 up until 2023 and contains deal and merging parties' information such as merger announcement date, firm name, CUSIP, industry, stock ticker, market value, among other.
   - **Key firm identifier used:** CUSIP (which needed to be extracted from the ISIN).[^1]
