@@ -26,7 +26,7 @@ The project is part of RA work for Jamie Coen at Imperial College and Patrick Co
   - The dataset contains stock data, namely stock prices (adjusted for events such as stock splits), of S&P500, merging parties and respective competitors.
   - **Key firm identifier used:** GVKEY and CUSIP
 
-## **Matching steps:**
+## **Matching steps**
 
 1. Merge Orbis dataset with Compustat via CUSIP to retrieve the merging parties' GVKEYS.
 2. Filter the H-P dataset with the latter's GVKEYS.
@@ -114,25 +114,22 @@ The project is divided into several steps, each assigned to a single script, tha
 ## **Prerequisites**
 - **R and RStudio:** Ensure you have R installed with a working environment.
 - **Required R Packages:**  
-  Install the following R packages:
+  The code requires prior installation of the following packages to run:
   ```r
-  install.packages(c("dplyr", "readxl", "lubridate", "bizdays", "tidyverse", "DBI", "RPostgres", "scales", "RSQLite"))
+  install.packages(c("dplyr", "tidyr", "lubridate", "RPostgres"))
   ```
 - **WRDS Database Access:**  
-  This project connects to the WRDS database to retrieve financial data. Ensure you have WRDS credentials set as environment variables:
+  To establish a connection to the WRDS API, the code requires a WRDS username and password. For privacy purposes, these have been stored as environmental variables. Run the two lines below in the Windows PowerShell to create them.
   ```bash
   # Example commands (in PowerShell)
   Add-Content c:\Users\$env:USERNAME\Documents\.Renviron "WRDS_USER=your_username"
   Add-Content c:\Users\$env:USERNAME\Documents\.Renviron "WRDS_PASS=your_password"
   ```
-- **Downloading M&A Deals:**  
-  Ensure to download M&A deals above $1Mn of US firms through the LSEG/Refinitiv Workspace.
 
 ---
 
 ## **Output**
-- The project generates a dataset with the following outputs for each deal:
-  - Cumulative Abnormal Returns (CAR) over the 31-day event window relative to the market both in relative (i.e. using stock returns) and absolute terms (using stock prices).
-  - Firm-specific information (industry, ticker, market cap, rivals, etc.).
-
+The project generates a final dataset with the following variables:
+  - Deal information such as announcement date, merging parties GVKEY, industry as well as deal type and bid premium. 
+  - Cumulative Abnormal Returns (CAR) over the 31-day event window estimated both in relative terms (i.e. with stock returns) and in absolute terms (i.e. with stock prices). Standard deviations are also reported.
 ---
