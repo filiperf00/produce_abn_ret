@@ -5,7 +5,7 @@
 ## **Overview**
 This repository contains a set of R scripts used to estimate the cumulative abnormal returns (CAR) of firms involved in mergers and acquisitions (M&A). This includes both merging parties (acquirer and target) as well as their top-5 rivals, obtained from the **Hoberg-Philips** dataset. The abnormal returns are estimated for an event window of 15 trading days before and after the merger announcement date (31 days in total).
 
-The project is part of RA work for Jamie Coen at Imperial College and Patrick Coen (Toulouse School of Economics).
+The project is part of RA work for Jamie Coen at Imperial College and Patrick Coen (Warwick Business School).
 
 ## **Data Sources**
 **Orbis M&A:**  
