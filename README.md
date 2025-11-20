@@ -59,7 +59,7 @@ Such model is then leveraged to extrapolate the firm's returns throughout the ev
 ---
 
 ## **Project's scripts**
-The project is divided into several steps, each assigned to a single script, that are executed by a **master script (`master_script.R`)**. The steps are as follows:
+The project is divided into several steps, each assigned to a single script, that are executed by a **master script (`12_master_script.R`)**. The steps are as follows:
 
 ### **Step 1: Extract first 6 digits of CUSIP from ISIN**
 - **Script:** `1_extract_cusips.R`
@@ -106,7 +106,7 @@ The project is divided into several steps, each assigned to a single script, tha
 - **Purpose:** Calls the function created in `10_run_OLS_regressions.R` to produce the CAR and report them in a final output table.
 
 ### **Master Script**
-- **Script:** `master_script.R`
+- **Script:** `12_master_script.R`
 - **Purpose:** Automatically runs all the scripts sequentially and processes the data in batches of 5k deals (to avoid memory clogging).  
 
 ---
