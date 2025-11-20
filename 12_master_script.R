@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# master_script.R
+# 12_master_script.R
 #
 # Author: Filipe Ribeiro Ferreira
 #
@@ -120,4 +120,5 @@ run_all_scripts <- function() {
 # to run all the script
 execution_time <- system.time( call_to_run_all_scripts <- run_all_scripts() 
                                )
+
 
