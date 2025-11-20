@@ -105,9 +105,9 @@ The project is divided into several steps, each assigned to a single script, tha
 - **Script:** `11_estimate_cum_abn_ret.R`
 - **Purpose:** Calls the function created in `10_run_OLS_regressions.R` to produce the CAR and report them in a final output table.
 
-### **Master Script**
+### **Stp 12: Run Master Script**
 - **Script:** `12_master_script.R`
-- **Purpose:** Automatically runs all the scripts sequentially and processes the data in batches of 5k deals (to avoid memory clogging).  
+- **Purpose:** Calls all the scripts sequentially by processing the data in batches of 5k deals (to avoid memory clogging).  
 
 ---
 
